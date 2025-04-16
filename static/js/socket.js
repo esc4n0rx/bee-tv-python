@@ -22,7 +22,13 @@ function initSocket(chatType) {
         }
         
         // Criar nova conexão
-        socket = io();
+        socket = io({
+            // Add these options for better connection stability
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            timeout: 20000
+        });
+        
         currentChatType = chatType;
         
         // Event listeners
@@ -78,6 +84,75 @@ function initSocket(chatType) {
             // Reproduzir som se a mensagem for recebida
             if (!isMe) {
                 window.BeeTV.playNotificationSound();
+            }
+        });
+        
+        // Evento de início de chat
+        socket.on('chat_started', (data) => {
+            currentRoom = data.room;
+            updateStatus('Conectado! Você pode começar a conversar.');
+            
+            const statusElement = document.querySelector('.chat-status');
+            if (statusElement) {
+                statusElement.classList.add('connected');
+                statusElement.classList.remove('disconnected');
+            }
+            
+            // Adicionar mensagem de sistema
+            addMessage('Você está conectado com um estranho!', 'system');
+            
+            // Habilitar botões relevantes
+            const endChatBtn = document.getElementById('end-chat-btn');
+            if (endChatBtn) endChatBtn.disabled = false;
+            
+            // Habilitar campos de entrada
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            if (messageInput) {
+                messageInput.disabled = false;
+                messageInput.focus();
+            }
+            if (sendBtn) sendBtn.disabled = false;
+            
+            // Reproduzir som de notificação
+            window.BeeTV.playNotificationSound();
+            
+            // Se for chat de vídeo, iniciar a transmissão
+            if (chatType === 'video' && window.VideoChat) {
+                window.VideoChat.startVideoCall(currentRoom);
+            }
+        });
+        
+        // Evento de término de chat
+        socket.on('chat_ended', (data) => {
+            currentRoom = null;
+            updateStatus('A conversa foi encerrada.');
+            
+            const statusElement = document.querySelector('.chat-status');
+            if (statusElement) {
+                statusElement.classList.remove('connected');
+            }
+            
+            // Adicionar mensagem de sistema
+            let message = 'O estranho desconectou.';
+            if (data && data.reason === 'left') {
+                message = 'O estranho encerrou a conversa.';
+            }
+            addMessage(message, 'system');
+            
+            // Desabilitar botões relevantes
+            const endChatBtn = document.getElementById('end-chat-btn');
+            if (endChatBtn) endChatBtn.disabled = true;
+            
+            // Desabilitar campos de entrada
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            if (messageInput) messageInput.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+            
+            // Se for chat de vídeo, parar a transmissão
+            if (chatType === 'video' && window.VideoChat) {
+                window.VideoChat.stopLocalStream();
             }
         });
         
@@ -214,64 +289,3 @@ window.SocketManager = {
     leaveChat,
     sendWebRTCSignal
 };
-        
-        // Evento de início de chat
-        socket.on('chat_started', (data) => {
-            currentRoom = data.room;
-            updateStatus('Conectado! Você pode começar a conversar.');
-            document.querySelector('.chat-status').classList.add('connected');
-            document.querySelector('.chat-status').classList.remove('disconnected');
-            
-            // Adicionar mensagem de sistema
-            addMessage('Você está conectado com um estranho!', 'system');
-            
-            // Habilitar botões relevantes
-            const endChatBtn = document.getElementById('end-chat-btn');
-            if (endChatBtn) endChatBtn.disabled = false;
-            
-            // Habilitar campos de entrada
-            const messageInput = document.getElementById('message-input');
-            const sendBtn = document.getElementById('send-btn');
-            if (messageInput) {
-                messageInput.disabled = false;
-                messageInput.focus();
-            }
-            if (sendBtn) sendBtn.disabled = false;
-            
-            // Reproduzir som de notificação
-            window.BeeTV.playNotificationSound();
-            
-            // Se for chat de vídeo, iniciar a transmissão
-            if (chatType === 'video' && window.VideoChat) {
-                window.VideoChat.startVideoCall(currentRoom);
-            }
-        });
-        
-        // Evento de término de chat
-        socket.on('chat_ended', (data) => {
-            currentRoom = null;
-            updateStatus('A conversa foi encerrada.');
-            document.querySelector('.chat-status').classList.remove('connected');
-            
-            // Adicionar mensagem de sistema
-            let message = 'O estranho desconectou.';
-            if (data.reason === 'left') {
-                message = 'O estranho encerrou a conversa.';
-            }
-            addMessage(message, 'system');
-            
-            // Desabilitar botões relevantes
-            const endChatBtn = document.getElementById('end-chat-btn');
-            if (endChatBtn) endChatBtn.disabled = true;
-            
-            // Desabilitar campos de entrada
-            const messageInput = document.getElementById('message-input');
-            const sendBtn = document.getElementById('send-btn');
-            if (messageInput) messageInput.disabled = true;
-            if (sendBtn) sendBtn.disabled = true;
-            
-            // Se for chat de vídeo, parar a transmissão
-            if (chatType === 'video' && window.VideoChat) {
-                window.VideoChat.stopLocalStream();
-            }
-        });

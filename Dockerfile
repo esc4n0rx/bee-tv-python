@@ -19,4 +19,4 @@ ENV HOST=0.0.0.0
 ENV DEBUG=False
 
 # Comando para iniciar a aplicação com Gunicorn e eventlet
-CMD gunicorn --worker-class eventlet -w 1 --bind $HOST:$PORT app:app
+CMD gunicorn --config gunicorn_config.py app:app
