@@ -2,10 +2,13 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 import uuid
 import logging
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'bee-tv-secret-key'
-socketio = SocketIO(app, cors_allowed_origins="*")
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'bee-tv-secret-key')
+
+# Configurar o SocketIO para produção
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Configuração de logging
 logging.basicConfig(level=logging.INFO)
@@ -134,4 +137,14 @@ def handle_webrtc_signal(data):
         }, room=receiver)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    # Obter porta do ambiente ou usar 5000 como padrão
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Em produção, use 0.0.0.0 para ouvir em todas as interfaces
+    host = os.environ.get('HOST', '0.0.0.0')
+    
+    # Usar modo debug com base em variável de ambiente
+    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
+    
+    # Iniciar o servidor
+    socketio.run(app, host=host, port=port, debug=debug)
