@@ -1,0 +1,233 @@
+/* Reset e variáveis */
+:root {
+    --primary: #FFD700;
+    --primary-dark: #E6C200;
+    --primary-light: #FFF1AA;
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray-light: #F5F5F5;
+    --gray: #CCCCCC;
+    --gray-dark: #333333;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+    --border-radius: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--black);
+    background-color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Honeycomb Background */
+.honeycomb-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/honeycomb.svg');
+    background-size: 200px;
+    opacity: 0.1;
+    z-index: -1;
+    animation: float 60s infinite linear;
+}
+
+@keyframes float {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 200px 200px;
+    }
+}
+
+/* Header */
+header {
+    background-color: var(--primary);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--black);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--primary);
+    color: var(--black);
+    font-size: 0.9rem;
+}
+
+/* Common Components */
+.btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: var(--black);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-danger {
+    background-color: #FF4136;
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: #E63329;
+}
+
+.btn:disabled, .btn-danger:disabled {
+    background-color: var(--gray);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.highlight {
+    color: var(--primary-dark);
+    font-weight: bold;
+}
+
+/* Bee Animation */
+.bee-animation {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-image: url('../img/bee.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: fly 20s infinite linear;
+    z-index: 10;
+}
+
+@keyframes fly {
+    0% {
+        transform: translate(0, 0) rotate(10deg);
+    }
+    25% {
+        transform: translate(-100px, -50px) rotate(-5deg);
+    }
+    50% {
+        transform: translate(-200px, 0) rotate(10deg);
+    }
+    75% {
+        transform: translate(-100px, 50px) rotate(-5deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(10deg);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .logo a {
+        font-size: 1.2rem;
+    }
+    
+    .logo img {
+        height: 30px;
+    }
+    
+    main {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+/* Animações Gerais */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Componentes de Carregamento */
+.searching-animation {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.honey-drop {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}

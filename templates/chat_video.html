@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Bee TV - Chat de Vídeo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat-video.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/socket.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/chat-video.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="video-chat-container">
+    <div class="chat-status">
+        <div id="status-message">Procurando alguém para conversar...</div>
+        <div class="searching-animation">
+            <div class="honey-drop"></div>
+            <div class="honey-drop"></div>
+            <div class="honey-drop"></div>
+        </div>
+    </div>
+    
+    <div class="video-container" id="video-container">
+        <div class="video-wrapper">
+            <video id="remote-video" class="remote-video" autoplay></video>
+            <video id="local-video" class="local-video" autoplay muted></video>
+        </div>
+        
+        <div class="video-controls">
+            <button id="toggle-video-btn" class="control-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+            </button>
+            <button id="toggle-audio-btn" class="control-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                </svg>
+            </button>
+            <button id="toggle-chat-btn" class="control-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <div class="video-chat-sidebar" id="video-chat-sidebar">
+        <div class="messages-container" id="messages-container">
+            <!-- As mensagens serão adicionadas aqui via JavaScript -->
+        </div>
+        
+        <div class="chat-input-container" id="chat-input-container">
+            <input type="text" id="message-input" placeholder="Digite sua mensagem..." disabled>
+            <button id="send-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <div class="chat-actions">
+        <button id="new-chat-btn" class="btn">Nova Conversa</button>
+        <button id="end-chat-btn" class="btn btn-danger" disabled>Encerrar Conversa</button>
+    </div>
+</div>
+{% endblock %}

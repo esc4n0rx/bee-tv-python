@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bee TV - Converse com desconhecidos de forma anônima{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    {% block extra_js %}{% endblock %}
+</head>
+<body>
+    <div class="honeycomb-background"></div>
+    
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Bee TV Logo">
+                <span>Bee TV</span>
+            </a>
+        </div>
+    </header>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p>Bee TV - Converse com desconhecidos de forma anônima.</p>
+    </footer>
+</body>
+</html>

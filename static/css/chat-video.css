@@ -1,0 +1,317 @@
+/* Estilos para o chat de vídeo */
+
+.video-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px);
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.chat-status {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+#status-message {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--black);
+}
+
+.honey-drop {
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.honey-drop:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.honey-drop:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.video-container {
+    flex: 1;
+    display: flex;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-wrapper {
+    position: relative;
+    flex: 1;
+    background-color: var(--black);
+    overflow: hidden;
+}
+
+.remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: var(--black);
+}
+
+.local-video {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    bottom: 20px;
+    right: 20px;
+    border-radius: var(--border-radius);
+    border: 3px solid var(--primary);
+    object-fit: cover;
+    z-index: 10;
+    transition: var(--transition);
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 20;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.control-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--black);
+}
+
+.control-btn:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+.control-btn.off {
+    background-color: #FF4136;
+}
+
+.control-btn.off svg {
+    fill: var(--white);
+}
+
+.video-chat-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-left: 1px solid var(--gray);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: var(--transition);
+    z-index: 30;
+}
+
+.video-chat-sidebar.active {
+    transform: translateX(0);
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    margin-bottom: 1rem;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease;
+}
+
+.message-content {
+    padding: 0.8rem 1rem;
+    border-radius: var(--border-radius);
+    display: inline-block;
+    position: relative;
+    word-break: break-word;
+}
+
+.message.received {
+    align-self: flex-start;
+}
+
+.message.sent {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.message.received .message-content {
+    background-color: var(--gray-light);
+    color: var(--black);
+    border-bottom-left-radius: 0;
+}
+
+.message.sent .message-content {
+    background-color: var(--primary);
+    color: var(--black);
+    border-bottom-right-radius: 0;
+}
+
+.message.system {
+    max-width: 100%;
+    text-align: center;
+}
+
+.message.system .message-content {
+    background-color: var(--gray);
+    color: var(--black);
+    font-style: italic;
+}
+
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--gray-light);
+    border-top: 1px solid var(--gray);
+}
+
+#message-input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+#message-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+}
+
+#message-input:disabled {
+    background-color: var(--gray);
+    cursor: not-allowed;
+}
+
+#send-btn {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: var(--transition);
+}
+
+#send-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--black);
+}
+
+#send-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+#send-btn:disabled {
+    background-color: var(--gray);
+    cursor: not-allowed;
+}
+
+.chat-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.chat-actions .btn {
+    flex: 1;
+    max-width: 200px;
+}
+
+/* Mensagem de permissão de câmera */
+.permission-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    max-width: 80%;
+    z-index: 100;
+}
+
+.permission-message .btn {
+    margin-top: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .video-chat-sidebar {
+        width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-chat-container {
+        height: calc(100vh - 130px);
+    }
+    
+    .local-video {
+        width: 100px;
+        height: 100px;
+        bottom: 80px;
+        right: 10px;
+    }
+    
+    .video-chat-sidebar {
+        width: 100%;
+        height: 50%;
+        bottom: 0;
+        top: auto;
+        transform: translateY(100%);
+        border-left: none;
+        border-top: 1px solid var(--gray);
+    }
+    
+    .video-chat-sidebar.active {
+        transform: translateY(0);
+    }
+    
+    .message {
+        max-width: 90%;
+    }
+}
