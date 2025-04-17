@@ -81,7 +81,7 @@ function initSocket(chatType) {
             addMessage(data.message, type);
             
             if (!isMe) {
-                window.BeeTV.playNotificationSound();
+                window.BeeTV.playSound();
             }
         });
         
@@ -112,7 +112,7 @@ function initSocket(chatType) {
             if (sendBtn) sendBtn.disabled = false;
             
            
-            window.BeeTV.playNotificationSound();
+            window.BeeTV.playSound();
             
             
             if (chatType === 'video' && window.VideoChat) {
