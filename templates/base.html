@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bee TV - Converse com desconhecidos de forma anônima{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}"> -->
     {% block extra_css %}{% endblock %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
@@ -12,11 +13,12 @@
 </head>
 <body>
     <div class="honeycomb-background"></div>
+    <div class="honeycomb-pattern"></div>
     
     <header>
         <div class="logo">
-            <a href="/">
-                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Bee TV Logo">
+            <a href="/" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Bee TV Logo" class="svg-yellow">
                 <span>Bee TV</span>
             </a>
         </div>
@@ -29,5 +31,8 @@
     <footer>
         <p>Bee TV - Converse com desconhecidos de forma anônima.</p>
     </footer>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
 </body>
 </html>

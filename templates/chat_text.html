@@ -3,7 +3,7 @@
 {% block title %}Bee TV - Chat de Texto{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/chat-text.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock %}
 
 {% block extra_js %}
@@ -24,6 +24,7 @@
     
     <div class="chat-area" id="chat-area">
         <div class="messages-container" id="messages-container">
+            <!-- Messages will be added here dynamically -->
         </div>
         
         <div class="chat-input-container" id="chat-input-container">

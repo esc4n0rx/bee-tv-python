@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -44,7 +44,7 @@
             </div>
             <h2>Chat de Texto</h2>
             <p>Converse por texto com desconhecidos</p>
-            <a href="/chat-texto" class="btn">Iniciar Chat</a>
+            <a href="/chat-texto" class="btn btn-glow">Iniciar Chat</a>
         </div>
         
         <div class="choice-card video-chat">
@@ -53,7 +53,7 @@
             </div>
             <h2>Chat de Vídeo</h2>
             <p>Converse por vídeo com desconhecidos</p>
-            <a href="/chat-video" class="btn">Iniciar Chat</a>
+            <a href="/chat-video" class="btn btn-glow">Iniciar Chat</a>
         </div>
     </div>
     
