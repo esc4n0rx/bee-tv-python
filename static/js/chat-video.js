@@ -1,7 +1,6 @@
 /**
  * Lógica do chat de vídeo da Bee TV
  */
-
 document.addEventListener('DOMContentLoaded', function() {
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
@@ -21,8 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let isAudioEnabled = true;
     let isChatOpen = false;
     let isConnected = false;
+    let isInitiator = false; 
+    let pendingCandidates = []; 
     
-    // Adiciona elemento para efeito de TV estática
+
     const staticEffect = document.createElement('div');
     staticEffect.className = 'tv-static-effect';
     staticEffect.innerHTML = `
@@ -32,17 +33,17 @@ document.addEventListener('DOMContentLoaded', function() {
     videoContainer.appendChild(staticEffect);
 
     function init() {
-        // Mostrar efeito de TV estática por padrão
+
         staticEffect.style.display = 'block';
         
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(stream => {
                 localStream = stream;
                 
-                // Adiciona o stream local ao elemento de vídeo
+            
                 if (localVideo) {
                     localVideo.srcObject = stream;
-                    // Garantir que o vídeo comece a ser reproduzido
+
                     localVideo.play().catch(e => console.error("Erro ao reproduzir vídeo local:", e));
                 }
 
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showPermissionError() {
-        staticEffect.style.display = 'none'; // Esconder efeito de estática
+        staticEffect.style.display = 'none';
         
         const errorDiv = document.createElement('div');
         errorDiv.className = 'permission-message';
@@ -109,8 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function startVideoCall(roomId) {
         isConnected = true;
-        // Esconder efeito de TV estática quando conectado com outro usuário
+       
         staticEffect.style.display = 'none';
+        
+
+        isInitiator = true;
         
         setupPeerConnection();
         createAndSendOffer();
@@ -124,14 +128,15 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         };
         
-        // Fechar qualquer conexão existente antes de criar uma nova
+
         if (peerConnection) {
             peerConnection.close();
         }
         
+        pendingCandidates = []; 
         peerConnection = new RTCPeerConnection(configuration);
         
-        // Adicionar as trilhas locais à conexão
+       
         if (localStream) {
             localStream.getTracks().forEach(track => {
                 console.log('Adicionando trilha local à conexão:', track.kind);
@@ -141,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Stream local não disponível ao configurar peer connection');
         }
         
-        // Lidar com candidatos ICE
+
         peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
                 console.log('Enviando candidato ICE');
@@ -152,31 +157,34 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
         
-        // Receber stream remoto
+
         peerConnection.ontrack = (event) => {
             console.log('Stream remoto recebido:', event.streams[0]);
             if (remoteVideo && event.streams && event.streams[0]) {
                 remoteVideo.srcObject = event.streams[0];
-                // Garantir que o vídeo comece a ser reproduzido
+               
                 remoteVideo.play().catch(e => console.error("Erro ao reproduzir vídeo remoto:", e));
             }
         };
 
-        // Monitorar o estado da conexão
+
         peerConnection.onconnectionstatechange = () => {
             console.log('Estado da conexão WebRTC:', peerConnection.connectionState);
             if (peerConnection.connectionState === 'connected') {
                 console.log('Conexão WebRTC estabelecida com sucesso');
-                // Aqui podemos fazer algo quando a conexão é estabelecida
+
+                staticEffect.style.display = 'none';
+                isConnected = true;
             } else if (peerConnection.connectionState === 'disconnected' || 
                       peerConnection.connectionState === 'failed' ||
                       peerConnection.connectionState === 'closed') {
                 console.log('Conexão WebRTC encerrada ou falhou');
-                staticEffect.style.display = 'block'; // Mostrar efeito estático quando desconectado
+                staticEffect.style.display = 'block'; 
+                isConnected = false;
             }
         };
         
-        // Monitorar mudanças de ICE
+
         peerConnection.oniceconnectionstatechange = () => {
             console.log('Estado da conexão ICE:', peerConnection.iceConnectionState);
         };
@@ -208,12 +216,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSignal(signal, senderId) {
         if (!peerConnection) {
             console.warn('Recebido sinal WebRTC, mas peer connection não existe');
-            setupPeerConnection(); // Inicializar connection se não existir
+            setupPeerConnection(); 
         }
         
         console.log('Sinal WebRTC recebido:', signal.type);
         
         if (signal.type === 'offer') {
+           
+            isInitiator = false;
+            
             console.log('Oferta recebida, definindo descrição remota');
             peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp))
                 .then(() => {
@@ -231,7 +242,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         sdp: peerConnection.localDescription
                     });
                     
-                    // Esconder efeito de TV estática quando conectado
+                    
+                    processPendingCandidates();
+                    
+                   
                     staticEffect.style.display = 'none';
                     isConnected = true;
                 })
@@ -240,22 +254,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         } else if (signal.type === 'answer') {
             console.log('Resposta recebida, definindo descrição remota');
-            peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp))
-                .then(() => {
-                    console.log('Conexão de resposta estabelecida');
-                    // Esconder efeito de TV estática quando conectado
-                    staticEffect.style.display = 'none';
-                    isConnected = true;
-                })
-                .catch(error => {
-                    console.error('Erro ao processar resposta:', error);
-                });
+            
+            
+            if (peerConnection.signalingState === 'have-local-offer') {
+                peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp))
+                    .then(() => {
+                        console.log('Conexão de resposta estabelecida');
+                        
+                       
+                        processPendingCandidates();
+                        
+                        
+                        staticEffect.style.display = 'none';
+                        isConnected = true;
+                    })
+                    .catch(error => {
+                        console.error('Erro ao processar resposta:', error);
+                    });
+            } else {
+                console.warn('Ignorando resposta: estado de sinalização incorreto:', peerConnection.signalingState);
+            }
         } else if (signal.type === 'ice-candidate') {
-            console.log('Candidato ICE recebido');
-            peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate))
-                .catch(error => {
-                    console.error('Erro ao adicionar candidato ICE:', error);
-                });
+            if (signal.candidate) {
+                console.log('Candidato ICE recebido');
+                
+               
+                if (
+                    peerConnection.remoteDescription && 
+                    peerConnection.remoteDescription.type
+                ) {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate))
+                        .catch(error => {
+                            console.error('Erro ao adicionar candidato ICE:', error);
+                        });
+                } else {
+                  
+                    console.log('Armazenando candidato ICE para processamento posterior');
+                    pendingCandidates.push(signal.candidate);
+                }
+            }
+        }
+    }
+    
+
+    function processPendingCandidates() {
+        if (pendingCandidates.length > 0) {
+            console.log(`Processando ${pendingCandidates.length} candidatos ICE pendentes`);
+            
+            pendingCandidates.forEach(candidate => {
+                peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+                    .catch(error => {
+                        console.error('Erro ao adicionar candidato ICE pendente:', error);
+                    });
+            });
+            
+            pendingCandidates = []; 
         }
     }
     
@@ -275,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (localVideo) localVideo.srcObject = null;
         if (remoteVideo) remoteVideo.srcObject = null;
         
-        // Mostrar efeito de TV estática quando não conectado
+       
         staticEffect.style.display = 'block';
         isConnected = false;
     }
@@ -314,10 +367,11 @@ document.addEventListener('DOMContentLoaded', function() {
             window.SocketManager.leaveChat();
             stopLocalStream();
             
-            // Reiniciar a conexão
-            init();
-            
-            updateStatus('Procurando um novo estranho para conversar...');
+
+            setTimeout(() => {
+                init();
+                updateStatus('Procurando um novo estranho para conversar...');
+            }, 500);
         });
     }
     
@@ -333,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             addSystemMessage('Você encerrou a conversa.');
             
-            // Mostrar efeito de TV estática quando não conectado
+            
             staticEffect.style.display = 'block';
             isConnected = false;
         });
@@ -366,13 +420,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Expor funções para o contexto global
+
     window.VideoChat = {
         startVideoCall,
         handleSignal,
         stopLocalStream
     };
 
-    // Inicializar o chat de vídeo
+
     init();
 });
