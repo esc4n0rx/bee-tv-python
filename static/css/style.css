@@ -1599,3 +1599,110 @@
   .svg-yellow:hover {
     filter: invert(80%) sepia(70%) saturate(1200%) hue-rotate(5deg) brightness(110%) contrast(110%);
   }
+
+
+  /* Efeito de TV estática para o chat de vídeo */
+
+.tv-static-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  overflow: hidden;
+  display: none; /* Inicialmente oculto, será exibido pelo JavaScript */
+  pointer-events: none; /* Permitir que os controles abaixo sejam clicáveis */
+}
+
+.tv-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.7;
+}
+
+.tv-static-noise {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><g fill="white"><rect x="10" y="10" width="1" height="1" /><rect x="30" y="10" width="1" height="1" /><rect x="50" y="10" width="1" height="1" /><rect x="70" y="10" width="1" height="1" /><rect x="90" y="10" width="1" height="1" /><rect x="20" y="20" width="1" height="1" /><rect x="40" y="20" width="1" height="1" /><rect x="60" y="20" width="1" height="1" /><rect x="80" y="20" width="1" height="1" /><rect x="10" y="30" width="1" height="1" /><rect x="30" y="30" width="1" height="1" /><rect x="50" y="30" width="1" height="1" /><rect x="70" y="30" width="1" height="1" /><rect x="90" y="30" width="1" height="1" /><rect x="20" y="40" width="1" height="1" /><rect x="40" y="40" width="1" height="1" /><rect x="60" y="40" width="1" height="1" /><rect x="80" y="40" width="1" height="1" /><rect x="10" y="50" width="1" height="1" /><rect x="30" y="50" width="1" height="1" /><rect x="50" y="50" width="1" height="1" /><rect x="70" y="50" width="1" height="1" /><rect x="90" y="50" width="1" height="1" /><rect x="20" y="60" width="1" height="1" /><rect x="40" y="60" width="1" height="1" /><rect x="60" y="60" width="1" height="1" /><rect x="80" y="60" width="1" height="1" /><rect x="10" y="70" width="1" height="1" /><rect x="30" y="70" width="1" height="1" /><rect x="50" y="70" width="1" height="1" /><rect x="70" y="70" width="1" height="1" /><rect x="90" y="70" width="1" height="1" /><rect x="20" y="80" width="1" height="1" /><rect x="40" y="80" width="1" height="1" /><rect x="60" y="80" width="1" height="1" /><rect x="80" y="80" width="1" height="1" /><rect x="10" y="90" width="1" height="1" /><rect x="30" y="90" width="1" height="1" /><rect x="50" y="90" width="1" height="1" /><rect x="70" y="90" width="1" height="1" /><rect x="90" y="90" width="1" height="1" /></g></svg>');
+  animation: tv-static-noise 0.5s infinite, move 10s infinite linear;
+  opacity: 0.4;
+}
+
+/* Linhas horizontais de interferência */
+.tv-static:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+  );
+  background-size: 100% 8px;
+  animation: tv-static-scan 8s linear infinite;
+}
+
+/* Falha vertical ocasional */
+.tv-static:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+  );
+  opacity: 0;
+  animation: tv-static-glitch 4s infinite;
+}
+
+@keyframes tv-static-noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+}
+
+@keyframes move {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+
+@keyframes tv-static-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes tv-static-glitch {
+  0%, 100% { opacity: 0; }
+  50%, 52% { opacity: 1; }
+  51% { opacity: 0; }
+  50.5%, 51.5% { transform: scaleX(1.2); }
+}
+
+/* Efeito de TV antiga com bordas arredondadas */
+.tv-static:before, .tv-static:after, .tv-static-noise {
+  border-radius: var(--border-radius);
+}
